@@ -109,7 +109,13 @@ class WaBackup:
             page_token = page["nextPageToken"]
 
     def backups(self):
-        return self.list_path("clients/wa/backups")
+        backups = list(self.list_path("clients/wa/backups"))
+        for backup in backups:
+            if "activeTransactionId" in backup:
+                print("Likely corrupted backup:", json.dumps(backup, indent=4))
+            else:
+                print(json.dumps(backup, indent=4))
+        return backups
 
     def backup_files(self, backup):
         return self.list_path("{}/files".format(backup["name"]))
